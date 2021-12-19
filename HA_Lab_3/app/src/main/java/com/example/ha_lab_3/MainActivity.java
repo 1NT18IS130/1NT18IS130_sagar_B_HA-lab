@@ -4,15 +4,20 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import android.os.Bundle;
 import android.content.Intent;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
 
+import java.util.regex.Pattern;
+
 public class MainActivity extends AppCompatActivity {
 
     String digits;
+    String[] split_digits;
     float result = 0;
+    int flag = 1;
     EditText display;
     Button one, two, three, four, five, six, seven, eight, nine, zero;
     Button plus, minus, multiply, divide, equal, back;
@@ -145,16 +150,41 @@ public class MainActivity extends AppCompatActivity {
             public void onClick(View view) {
                 result = 0;
                 digits = display.getText().toString();
-                if (digits.charAt(1) == '+')
-                    result = (digits.charAt(0)-'0') + (digits.charAt(2)-'0');
-                if (digits.charAt(1) == '-')
-                    result = (digits.charAt(0)-'0') - (digits.charAt(2)-'0');
-                if (digits.charAt(1) == '*')
-                    result = (digits.charAt(0)-'0') * (digits.charAt(2)-'0');
-                if (digits.charAt(1) == '/') {
-                    result = (float)(digits.charAt(0) - '0') / (float)(digits.charAt(2) - '0');
+                System.out.println(digits);
+                for (int i = 0; i< digits.length(); i++) {
+                    if (digits.charAt(i) == '+') {
+                        split_digits = digits.split(Pattern.quote("+"), 2);
+                        System.out.println(split_digits);
+                        result = Integer.parseInt(split_digits[0]) + Integer.parseInt(split_digits[1]);
+                    }
+
+                    if (digits.charAt(i) == '-') {
+                        split_digits = digits.split(Pattern.quote("-"), 2);
+                        System.out.println(split_digits);
+                        result = Integer.parseInt(split_digits[0]) - Integer.parseInt(split_digits[1]);
+                    }
+
+                    if (digits.charAt(i) == '*') {
+                        split_digits = digits.split(Pattern.quote("*"), 2);
+                        System.out.println(split_digits);
+                        result = Integer.parseInt(split_digits[0]) * Integer.parseInt(split_digits[1]);
+                    }
+                    if (digits.charAt(i) == '/') {
+                        split_digits = digits.split(Pattern.quote("/"), 2);
+                        System.out.println(split_digits);
+                        if(Integer.parseInt(split_digits[1]) == 0)
+                            flag = 0;
+                        try {
+                            result = (float) Integer.parseInt(split_digits[0]) / (float) Integer.parseInt(split_digits[1]);
+                        } catch (Exception e) {
+                            System.out.println();
+                        }
+                    }
                 }
-                display.setText(Float.toString(result));
+                if (flag == 1)
+                    display.setText(Float.toString(result));
+                else
+                    display.setText("Error!");
             }
         });
 
